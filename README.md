@@ -73,3 +73,5 @@
 
 
 
+## Interesting apps
+- QGIS: https://www.qgis.org/en/site/
