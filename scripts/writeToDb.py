@@ -3,7 +3,6 @@ import csv
 import time
 import sys
 
-
 dbuser = "postgres"
 dbpassword = "test"
 dbhost = "localhost"
@@ -14,7 +13,7 @@ max_4g_range = 7000
 max_3g_range = 40000
 max_2g_range = 40000
 max_age_timestamp = 1514761200 # 2018 01 01 00:00:00
-mcc_starts_with = ('2')
+mcc_starts_with = ('242')
 clean_db = True
 
 # CSV file
@@ -47,7 +46,7 @@ def prepareDb():
     if clean_db:
         cur.execute("DROP TABLE IF EXISTS cell_towers;")
         cur.execute("DROP INDEX IF EXISTS cell_towers_geo_gist;")
-    cur.execute("CREATE TABLE IF NOT EXISTS cell_towers (cellid integer PRIMARY KEY, mcc integer, radio varchar(10), net smallint, range integer, samples integer, changable boolean, created timestamp, updated timestamp, geo geography(Polygon));")
+    cur.execute("CREATE TABLE IF NOT EXISTS cell_towers (cellid integer PRIMARY KEY, mcc integer, radio varchar(10), net smallint, range integer, samples integer, changable boolean, created timestamp, updated timestamp, lat float, lon float,  geo geography(Polygon));")
     cur.execute("CREATE INDEX IF NOT EXISTS cell_towers_geo_gist ON cell_towers USING GIST (geo);")
     cur.close()
     conn.commit()
@@ -69,7 +68,7 @@ def getCellsFromCsv():
                 if int(row[12]) < max_age_timestamp:
                     continue
                 range = rangeNormalizer(row[8], row[0])
-                queries.append("INSERT INTO cell_towers (cellid, mcc, radio, net, range, samples, changable, created, updated, geo) VALUES (%s, %s, '%s', %s, %s, %s, %s, to_timestamp(%s), to_timestamp(%s),ST_Buffer(ST_MakePoint(%s, %s)::geography, %s)) ON CONFLICT (cellid) DO NOTHING;" % (row[4], int(row[1]), row[0], int(row[2]), int(range),int(row[9]), bool(row[10]), int(row[11]), int(row[12]), float(row[6]), float(row[7]), float(range)))
+                queries.append("INSERT INTO cell_towers (cellid, mcc, radio, net, range, samples, changable, created, updated, lat, lon, geo) VALUES (%s, %s, '%s', %s, %s, %s, %s, to_timestamp(%s), to_timestamp(%s), %s, %s, ST_Buffer(ST_MakePoint(%s, %s)::geography, %s)) ON CONFLICT (cellid) DO NOTHING;" % (row[4], int(row[1]), row[0], int(row[2]), int(range),int(row[9]), bool(row[10]), int(row[11]), int(row[12]),float(row[7]), float(row[6]), float(row[6]), float(row[7]), float(range)))
                 counter += 1
                 # if counter % 1000 == 0:
                 sys.stdout.write('\r')
