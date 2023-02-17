@@ -1,0 +1,7 @@
+# Do not commit virtualenv
+/venv
+# Do not commit csv files
+*.csv
+# VSCODE settings
+/.vscode
+.DS_Store
