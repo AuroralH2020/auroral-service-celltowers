@@ -58,18 +58,20 @@
 | Hungary | 216 |
 | Norway | 242 |
 | Sweden | 240 |
-| SPAIN | 214 |
-| Ukraine | 255 |
+| Finland | 244 |
+| Denmark | 238 |
+| Netherlands | 204 |
+| Belgium | 206 |
+| Luxembourg | 270 |
+| Portugal | 268 |
 | Poland | 260 |
 | Germany | 262 |
-| Romania | 226 |
-| Bulgaria | 284 |
 | Greece | 202 |
 | Italy | 222 |
 | Spain | 214 |
 | France | 208 |
 | United Kingdom | 234 |
-| Romania | 226 |
+
 
 
 
