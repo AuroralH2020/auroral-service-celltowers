@@ -12,7 +12,7 @@ def get_all_towers(db: Session = Depends(get_db)):
     return towers
 
 @router.get('/coverage', response_model=List[schemas.CellTowerCoverageSchema], status_code=status.HTTP_200_OK)
-def get_all_towers(db: Session = Depends(get_db)):
+def get_coverage(db: Session = Depends(get_db)):
     coverage = db.query(models.CellTowerCoverage).all()
     return coverage
 
