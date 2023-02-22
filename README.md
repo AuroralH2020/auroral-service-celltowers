@@ -21,9 +21,11 @@
     - `pip install -r requirements.txt`
 -   Run script
 ### Scripts description
-- writeToDb.sh - script for writing data to database
+- loadCsvToDb.sh - script for writing data to database
     - everything is hardcoded in first lines of script
     - script defines some filtering rules
+- loadCountriesToDb.py - script for writing countries to database
+    - everything is hardcoded in first lines of script - you can choose which countries you want to load
 
 
 ## CSV

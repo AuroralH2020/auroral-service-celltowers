@@ -2,6 +2,8 @@ import psycopg2
 import csv
 import time
 import sys
+import chevron
+import query_templates
 
 dbuser = "postgres"
 dbpassword = "test"
@@ -12,23 +14,21 @@ dbname = "postgres"
 max_4g_range = 7000
 max_3g_range = 40000
 max_2g_range = 40000
-max_age_timestamp = 1514761200 # 2018 01 01 00:00:00
-mcc_starts_with = ('242')
-clean_db = True
+max_age_timestamp = 1609459261 # 2021 01 01 01:01:01
+# mcc_starts_with = ('242', '231', '230')
+mcc_starts_with = ('230')
+clean_db = False
 
 # CSV file
-csv_files = ['../MLS-full-cell-export-2023-02-15T000000.csv']
+csv_files = ['../MLS-full-cell-export-2023-02-15T000000.csv', '../cell_towers.csv']
 
 # store time to measure performance
 start = time.time()
-
-# pool = multiprocessing.Pool(2)
 
 
 # queries
 queries = []
 def main():
-    print("Main")
     prepareDb()
     getCellsFromCsv()
     print("Number of queries: " + str(len(queries)))
@@ -46,8 +46,9 @@ def prepareDb():
     if clean_db:
         cur.execute("DROP TABLE IF EXISTS cell_towers;")
         cur.execute("DROP INDEX IF EXISTS cell_towers_geo_gist;")
-    cur.execute("CREATE TABLE IF NOT EXISTS cell_towers (cellid integer PRIMARY KEY, mcc integer, radio varchar(10), net smallint, range integer, samples integer, changable boolean, created timestamp, updated timestamp, lat float, lon float,  geo geography(Polygon));")
+    cur.execute("CREATE TABLE IF NOT EXISTS cell_towers (cellid integer PRIMARY KEY, mcc integer, radio varchar(10), net smallint, range integer, samples bigint, changable boolean, created timestamp, updated timestamp, lat float, lon float,  geo geography(Polygon));")
     cur.execute("CREATE INDEX IF NOT EXISTS cell_towers_geo_gist ON cell_towers USING GIST (geo);")
+    cur.execute("CREATE INDEX IF NOT EXISTS cell_towers_mcc_idx ON cell_towers (mcc);")
     cur.close()
     conn.commit()
 
@@ -58,21 +59,40 @@ def getCellsFromCsv():
         print("Reading cells from csv file: " + csv_file)
         with open(csv_file, 'r') as f:
             counter = 0
+            total_counter = 0
             reader = csv.reader(f)
             next(reader) # Skip the header row.
             for row in reader:
                 # Filter by mcc
+                total_counter += 1
                 if not (row[1].startswith(mcc_starts_with)):
+                    # print("Skipping cell with mcc: " + row[1])
                     continue
                 # Filter by age
                 if int(row[12]) < max_age_timestamp:
                     continue
                 range = rangeNormalizer(row[8], row[0])
-                queries.append("INSERT INTO cell_towers (cellid, mcc, radio, net, range, samples, changable, created, updated, lat, lon, geo) VALUES (%s, %s, '%s', %s, %s, %s, %s, to_timestamp(%s), to_timestamp(%s), %s, %s, ST_Buffer(ST_MakePoint(%s, %s)::geography, %s)) ON CONFLICT (cellid) DO NOTHING;" % (row[4], int(row[1]), row[0], int(row[2]), int(range),int(row[9]), bool(row[10]), int(row[11]), int(row[12]),float(row[7]), float(row[6]), float(row[6]), float(row[7]), float(range)))
+                # check if point is in country for given mcc
+                values = {
+                    'cellid': row[4],
+                    'mcc': row[1],
+                    'radio': row[0],
+                    'net': row[2],
+                    'range': range,
+                    'samples': row[9],
+                    'changable': bool(row[10]),
+                    'created': row[11],
+                    'updated': row[12],
+                    'lat': row[7],
+                    'lon': row[6]
+                }
+                queries.append(chevron.render(query_templates.insertCells, values ))
+                # queries.append("INSERT INTO cell_towers (cellid, mcc, radio, net, range, samples, changable, created, updated, lat, lon, geo) VALUES (%s, %s, '%s', %s, %s, %s, %s, to_timestamp(%s), to_timestamp(%s), %s, %s, ST_Buffer(ST_MakePoint(%s, %s)::geography, %s)) ON CONFLICT (cellid) DO NOTHING;" % (row[4], int(row[1]), row[0], int(row[2]), int(range),int(row[9]), bool(row[10]), int(row[11]), int(row[12]),float(row[7]), float(row[6]), float(row[6]), float(row[7]), float(range)))
+                # print(queries[-1])
                 counter += 1
                 # if counter % 1000 == 0:
                 sys.stdout.write('\r')
-                sys.stdout.write("Processed " + str(counter) + " cells")
+                sys.stdout.write("Filtered " + str(counter) + "/" +  str(total_counter) + " cells")
                 sys.stdout.flush()
         sys.stdout.write('\n')
     print('Total: ' + str(len(queries)) + ' cells')

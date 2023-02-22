@@ -4,3 +4,4 @@ pandas==1.5.3
 pyproj==3.4.1
 shapely==2.0.1
 geopandas==0.12.2
+chevron==0.14.0
