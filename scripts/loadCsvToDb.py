@@ -4,6 +4,8 @@ import time
 import sys
 import chevron
 import query_templates
+from multiprocessing import Pool
+
 
 dbuser = "postgres"
 dbpassword = "test"
@@ -15,16 +17,20 @@ max_4g_range = 7000
 max_3g_range = 40000
 max_2g_range = 40000
 max_age_timestamp = 1609459261 # 2021 01 01 01:01:01
-# mcc_starts_with = ('242', '231', '230')
-mcc_starts_with = ('230')
-clean_db = False
+# Defined countries
+mcc_starts_with = ('242', '231', '230', '232', '214')
+# One country
+# mcc_starts_with = ('231')
+# Whole Europe
+# mcc_starts_with = ('2')
+clean_db = True
 
 # CSV file
 csv_files = ['../MLS-full-cell-export-2023-02-15T000000.csv', '../cell_towers.csv']
+# csv_files = ['../MLS-full-cell-export-2023-02-15T000000.csv']
 
 # store time to measure performance
 start = time.time()
-
 
 # queries
 queries = []
@@ -39,14 +45,16 @@ def main():
 
 def prepareDb():
     # connect to postgres
-    conn = psycopg2.connect("dbname=" + dbname + " user=" + dbuser + " host=" + dbhost + " password=" + dbpassword + " port=" + dbport)
+    conn = psycopg2.connect("dbname=" + dbname + " user=" + dbuser + " host=" + dbhost + " password=" + dbpassword + " port=" + dbport )
+    # disable autocommit
+    conn.autocommit = False
     # create a cursor
     cur = conn.cursor()
     # drop table if exists
     if clean_db:
         cur.execute("DROP TABLE IF EXISTS cell_towers;")
         cur.execute("DROP INDEX IF EXISTS cell_towers_geo_gist;")
-    cur.execute("CREATE TABLE IF NOT EXISTS cell_towers (cellid integer PRIMARY KEY, mcc integer, radio varchar(10), net smallint, range integer, samples bigint, changable boolean, created timestamp, updated timestamp, lat float, lon float,  geo geography(Polygon));")
+    cur.execute("CREATE TABLE IF NOT EXISTS cell_towers (cellid bigint PRIMARY KEY, mcc integer, radio varchar(10), net smallint, range integer, samples bigint, changable boolean, created timestamp, updated timestamp, lat float, lon float,  geo geography(Polygon));")
     cur.execute("CREATE INDEX IF NOT EXISTS cell_towers_geo_gist ON cell_towers USING GIST (geo);")
     cur.execute("CREATE INDEX IF NOT EXISTS cell_towers_mcc_idx ON cell_towers (mcc);")
     cur.close()
@@ -105,13 +113,11 @@ def insertToDb(queries):
     conn = psycopg2.connect("dbname=" + dbname + " user=" + dbuser + " host=" + dbhost + " password=" + dbpassword + " port=" + dbport)
     cur = conn.cursor()
     query = 0
-    for q in queries:
-        # print percentual progress to console
-        if query % 1000 == 0:
-            writePercentualProgress(query, len(queries))
-        cur.execute(q)
-        query += 1
-    writePercentualProgress(len(queries), len(queries))
+    for i in range(0, len(queries), 10):
+        writePercentualProgress(query, len(queries))
+        cur.execute(''.join(queries[i:i+10]))
+        query += 10
+        writePercentualProgress(100, 100)
     cur.close()
     conn.commit()
 

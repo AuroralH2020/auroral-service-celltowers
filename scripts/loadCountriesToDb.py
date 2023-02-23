@@ -16,7 +16,7 @@ border_file = 'world_countries.geojson'
 countryMcc = {
     'SK': 231, 'NO': 242, 'CZ': 230, 'DE': 262, 'AT': 232, 'PO': 260, 'HU': 216, 'RO': 226,
     'DK': 238, 'FI': 244, 'SE': 240, 'NL': 204, 'BE': 206, 'FR': 208, 'ES': 214, 'GB': 235,
-    'IT': 222, 'CH': 228, 'GR': 202,
+    'IT': 222, 'CH': 228, 'GR': 202, 'ES': 214, 'CHE': 228, 'GBR': 235, 'ITA': 222, 'LIE': 295,
 }
 
 # store time to measure performance
@@ -42,7 +42,7 @@ def prepareDb():
     if clean_db:
         cur.execute("DROP TABLE IF EXISTS countries;")
         cur.execute("DROP INDEX IF EXISTS countries_geo_gist;")
-    cur.execute("CREATE TABLE IF NOT EXISTS countries (code varchar(2), name varchar(40), mcc integer, geo geography);")
+    cur.execute("CREATE TABLE IF NOT EXISTS countries (code varchar(4), name varchar(40), mcc integer, geo geography);")
     cur.execute("CREATE INDEX IF NOT EXISTS countries_geo_gist ON countries USING GIST (geo);")
     cur.execute("CREATE INDEX IF NOT EXISTS countries_mcc_idx ON countries (mcc);")
     cur.close()
