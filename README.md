@@ -79,3 +79,8 @@
 
 ## Interesting apps
 - QGIS: https://www.qgis.org/en/site/
+
+
+## Starting the dev server
+
+```uvicorn app.main:app --reload```

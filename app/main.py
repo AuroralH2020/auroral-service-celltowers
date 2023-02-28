@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.routers import cell_towers
+from app.routers import cell_towers, countries
 
 app = FastAPI()
 
@@ -19,6 +19,7 @@ app.add_middleware(
 
 
 app.include_router(cell_towers.router, tags=['CellTowers'], prefix='/api/cell-towers')
+app.include_router(countries.router, tags=['Countries'], prefix='/api/countries')
 
 
 @app.get('/api/healthchecker')

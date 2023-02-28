@@ -1,6 +1,11 @@
-import datetime
 from pydantic import BaseModel
+from typing import Generic, TypeVar
+from pydantic.generics import GenericModel
 
+M = TypeVar("M", bound=BaseModel)
+
+class GenericSingleObject(GenericModel, Generic[M]):
+    rdf: M
 
 class CellTowerSchema(BaseModel):
     cellid: int
@@ -10,8 +15,6 @@ class CellTowerSchema(BaseModel):
     range: int
     samples: int
     changable: bool
-    # created = datetime
-    # updated = datetime
     lat: float
     lon: float
     geo: str
@@ -19,11 +22,43 @@ class CellTowerSchema(BaseModel):
     class Config:
         orm_mode = True
 
+class CellTowerClosestSchema(BaseModel):
+    cellid: int
+    range: int
+    lon: float
+    lat: float
+    distance: int
+
+    class Config:
+        orm_mode = True
+
+class DummySchema(BaseModel):
+    cellid: int
+    range: int
+
+    class Config:
+        orm_mode = True
+
 class CellTowerCoverageSchema(BaseModel):
     id: int
+    radio_total: int
+    radio_gsm: int
+    radio_umts: int
+    radio_lte: int
+    countrycode: str
+    geom: str
     lat: float
     lon: float
-    towers: int
 
+    class Config:
+        orm_mode = True
+
+
+class CountrySchema(BaseModel):
+    code: str
+    name: str
+    mcc: int
+    geo: str
+    
     class Config:
         orm_mode = True

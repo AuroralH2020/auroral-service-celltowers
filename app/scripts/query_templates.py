@@ -17,7 +17,10 @@ requestNearbyCells = """
 SELECT 
 	cellid,
 	ST_Distance(ST_MakePoint({{ lon }}, {{ lat }})::geography, ST_MakePoint(lon, lat)::geography) as distance,
-	ST_MakePoint(lon, lat)::geography 
+	range,
+	ST_MakePoint(lon, lat)::geography,
+    lat,
+    lon
 	FROM public.cell_towers
 WHERE ST_DWithin(geo, ST_MakePoint({{ lon }}, {{ lat }})::geography, 1, false)
 ORDER BY  distance
