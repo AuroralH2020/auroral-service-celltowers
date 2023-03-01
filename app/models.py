@@ -17,16 +17,16 @@ class CellTower(Base):
     geo = Column(Geometry('POLYGON'))
 
 class CellTowerCoverage(Base):
-    __tablename__ = 'coverage'
+    __tablename__ = 'signal_grid'
     id = Column(Integer, primary_key=True, nullable=False)
+    mcc = Column(Integer,  nullable=False)
     radio_total = Column(Integer,  nullable=False)
     radio_gsm = Column(Integer,  nullable=False)
     radio_umts = Column(Integer,  nullable=False)
     radio_lte = Column(Integer,  nullable=False)
     countrycode = Column(String, nullable=False)
     geom = Column(String, nullable=False)
-    lat = Column(Float, nullable=False)
-    lon = Column(Float, nullable=False)
+    geojson = Column(String, nullable=False)
 
 
 class Country(Base):
@@ -34,4 +34,4 @@ class Country(Base):
     code = Column(String, nullable=False, primary_key=True)
     name = Column(String, nullable=False)
     mcc = Column(Integer,  nullable=False)
-    geo = Column(String, nullable=False)
+    hexagons = Column(Integer,  nullable=False)

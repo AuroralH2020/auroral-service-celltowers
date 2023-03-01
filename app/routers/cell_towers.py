@@ -24,8 +24,8 @@ def get_closest_towers(lat: float, lon: float, db: Session = Depends(get_db)):
 def get_closest_towers_rdf_mapping(lat: float, lon: float, db: Session = Depends(get_db)):
     return Response(content={}, media_type="application/json")
 
-@router.get('/coverage', response_model=List[schemas.CellTowerCoverageSchema], status_code=status.HTTP_200_OK)
-def get_coverage(db: Session = Depends(get_db)):
-    coverage = db.query(models.CellTowerCoverage).all()
+@router.get('/coverage/{mcc}', response_model=List[schemas.CellTowerCoverageSchema], status_code=status.HTTP_200_OK)
+def get_coverage(mcc: int, db: Session = Depends(get_db)):
+    coverage = db.query(models.CellTowerCoverage).filter(models.CellTowerCoverage.mcc == mcc).all()
     return coverage
 
