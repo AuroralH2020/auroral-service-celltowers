@@ -6,6 +6,6 @@
 # VSCODE settings
 /.vscode
 .DS_Store
-
 .env
 ./app/scripts/coverage.json
+mcc-mnc-table.json
