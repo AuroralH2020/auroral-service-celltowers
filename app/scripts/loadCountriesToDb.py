@@ -12,7 +12,7 @@ dbname = "postgres"
 clean_db = True
 border_file = 'world_countries.geojson'
 mccmnc_file = 'mcc-mnc-table.json'
-border_enlargement = 0.1
+border_enlargement = "0.0"
 
 # store time to measure performance
 start = time.time()
@@ -45,7 +45,7 @@ def prepareDb():
         cur.execute("DROP TABLE IF EXISTS operators;")
         cur.execute("DROP INDEX IF EXISTS countries_mcc_idx;")
     # Prepare countries table
-    cur.execute("CREATE TABLE IF NOT EXISTS countries (code varchar(4), name varchar(40), mcc integer, geo geography);")
+    cur.execute("CREATE TABLE IF NOT EXISTS countries (code varchar(4), name varchar(40), mcc integer, geo geography, boundingBox geometry);")
     cur.execute("CREATE INDEX IF NOT EXISTS countries_geo_gist ON countries USING GIST (geo);")
     cur.execute("CREATE INDEX IF NOT EXISTS countries_mcc_idx ON countries (mcc);")
     # Prepare operators table
@@ -96,7 +96,8 @@ def getCountriesFromFile():
             if code in countryCodeToMcc:
                 mcc = str(countryCodeToMcc[code])
                 geo = "ST_SetSRID(ST_Buffer(ST_GeomFromGeoJSON('" + json.dumps(feature['geometry']) + "'), " + border_enlargement + "), 4326)"
-                queries.append("INSERT INTO countries (code, name, mcc, geo) VALUES ('" + code + "', '" + name + "', " + mcc + ", " + geo + ");")
+                boundingBox = "ST_Envelope(ST_SetSRID(ST_GeomFromGeoJSON('" + json.dumps(feature['geometry']) + "'), 4326))"
+                queries.append("INSERT INTO countries (code, name, mcc, geo, boundingBox) VALUES ('" + code + "', '" + name + "', " + mcc + ", " + geo +", " + boundingBox + ");")
     print('Total: ' + str(len(queries)) + ' queries')
     # print runtime
     print("Load time: " + str(time.time() - start))
