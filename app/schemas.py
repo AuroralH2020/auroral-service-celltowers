@@ -17,7 +17,7 @@ class CellTowerSchema(BaseModel):
     changable: bool
     lat: float
     lon: float
-    geo: str
+    # geo: str
 
     class Config:
         orm_mode = True
@@ -59,6 +59,9 @@ class CountrySchema(BaseModel):
     name: str
     mcc: int
     hexagons: int
+    center_lon: int
+    center_lat: int
+    box: str
     
     class Config:
         orm_mode = True

@@ -1,6 +1,5 @@
 from .database import Base
 from sqlalchemy import Column, Integer, Float, String, Boolean
-from geoalchemy2 import Geometry
 
 
 class CellTower(Base):
@@ -14,7 +13,7 @@ class CellTower(Base):
     changable = Column(Boolean,  nullable=False)
     lat = Column(Float, nullable=False)
     lon = Column(Float, nullable=False)
-    geo = Column(Geometry('POLYGON'))
+    # geo = Column(Geometry('POLYGON'))
 
 class CellTowerCoverage(Base):
     __tablename__ = 'signal_grid'
@@ -35,3 +34,6 @@ class Country(Base):
     name = Column(String, nullable=False)
     mcc = Column(Integer,  nullable=False)
     hexagons = Column(Integer,  nullable=False)
+    center_lon = Column(Integer,  nullable=False)
+    center_lat = Column(Integer,  nullable=False)
+    box = Column(String,  nullable=False)

@@ -1,6 +1,8 @@
+fastapi==0.92.0
+SQLAlchemy==2.0.4
+uvicorn==0.20.0
 postgis==1.0.4
-psycopg2==2.9.5
-pyproj==3.4.1
-shapely==2.0.1
+psycopg2-binary==2.8.6
+psycopg2==2.8.6
 chevron==0.14.0
-GeoAlchemy2==0.13.1
+python-dotenv==1.0.0
