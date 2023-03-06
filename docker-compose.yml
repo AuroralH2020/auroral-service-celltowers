@@ -1,5 +1,15 @@
 version: '3.3'
 services:
+  ui:
+      container_name: ui
+      image: registry.bavenir.eu/cell_towers_coverage_ui:dev
+      ports:
+          - 4200:4200
+  app:
+      container_name: app
+      image: registry.bavenir.eu/cell_towers_coverage:dev
+      ports:
+          - 8080:8080
   postgis:
       container_name: postgis
       environment:
