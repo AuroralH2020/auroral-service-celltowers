@@ -24,11 +24,11 @@ def get_closest_towers(lat: float, lon: float, db: Session = Depends(get_db)):
     return towers
 
 
-@router.get('/closest/rdf-mapping', response_model=Dict, status_code=status.HTTP_200_OK)
+@router.get('/closest/rdf-mapping', response_model=List, status_code=status.HTTP_200_OK)
 def get_closest_towers_rdf_mapping(lat: float, lon: float, db: Session = Depends(get_db)):
     query = text(chevron.render(requestNearbyCells, {'lat': lat, 'lon': lon}))
     towers: schemas.CellTowerClosestSchema = db.execute(query).all()
-    content = {
+    content = [{
         "@context": [
             "https://auroralh2020.github.io/auroral-ontology-contexts/cellTowers/context.json",
             {
@@ -37,26 +37,17 @@ def get_closest_towers_rdf_mapping(lat: float, lon: float, db: Session = Depends
                     "@type": "http://www.w3.org/2001/XMLSchema#integer"
                 }
             },
-            {
-                "oid": {
-                    "@id": "rdfs:label"
-                }
-            }
         ],
-        "@type": "Service",
-        "oid": "",
-        "CellTowers": [{
-            "cellId": "{0}".format(tower[0]),
-            "hasRange": {
-                "range": "{0}".format(tower[2])
-            },
-            "location": {
-                "lat": tower[4],
-                "long": tower[5]
-            },
-            "distance": tower[1]
-        } for tower in towers]
-    }
+        "cellId": "{0}".format(tower[0]),
+        "hasRange": {
+            "range": "{0}".format(tower[2])
+        },
+        "location": {
+            "lat": tower[4],
+            "long": tower[5]
+        },
+        "distance": tower[1]
+    } for tower in towers]
     return content
 
 

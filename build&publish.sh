@@ -52,15 +52,6 @@ echo Build and push image ${IMAGE_NAME} with tag ${ENV}
 # Do login
 docker login ${REGISTRY}
 
-# Compile ts into js
-tsc
-if [ $? != 0 ] 
-then
-    echo "Error running tsc"
-    say 'Error running tsc'
-    exit 1;
-fi
-
 
 # Multiarch builder
 docker buildx use multiplatform
@@ -76,8 +67,6 @@ then
                         -f Dockerfile . --push
     # Pull local arch version
     docker pull ${REGISTRY}/${IMAGE_NAME}:${ENV}
-    docker pull ${GIT_REGISTRY}/${GIT_IMAGE_NAME}:${GIT_ENV} # Build latest when new version
-    docker pull ${GIT_REGISTRY}/${GIT_IMAGE_NAME}:latest # Build latest when new version
 
 else 
      # with latest tag 

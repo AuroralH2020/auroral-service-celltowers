@@ -1,0 +1,132 @@
+[
+    {
+      "@context": [
+        "https://auroralh2020.github.io/auroral-ontology-contexts/cellTowers/context.json",
+        {
+          "distance": {
+            "@id": "https://auroral.iot.linkeddata.es/def/adapters#Distance",
+            "@type": "http://www.w3.org/2001/XMLSchema#integer"
+          }
+        }
+      ],
+      "cellId": "255732812",
+      "hasRange": {
+        "range": "1000"
+      },
+      "location": {
+        "lat": 17.138952,
+        "long": 48.151128
+      },
+      "distance": 1
+    },
+    {
+      "@context": [
+        "https://auroralh2020.github.io/auroral-ontology-contexts/cellTowers/context.json",
+        {
+          "distance": {
+            "@id": "https://auroral.iot.linkeddata.es/def/adapters#Distance",
+            "@type": "http://www.w3.org/2001/XMLSchema#integer"
+          }
+        }
+      ],
+      "cellId": "125493",
+      "hasRange": {
+        "range": "1000"
+      },
+      "location": {
+        "lat": 17.138948,
+        "long": 48.151229
+      },
+      "distance": 10
+    },
+    {
+      "@context": [
+        "https://auroralh2020.github.io/auroral-ontology-contexts/cellTowers/context.json",
+        {
+          "distance": {
+            "@id": "https://auroral.iot.linkeddata.es/def/adapters#Distance",
+            "@type": "http://www.w3.org/2001/XMLSchema#integer"
+          }
+        }
+      ],
+      "cellId": "527551",
+      "hasRange": {
+        "range": "122"
+      },
+      "location": {
+        "lat": 17.1387888,
+        "long": 48.1511826
+      },
+      "distance": 11
+    },
+    {
+      "@context": [
+        "https://auroralh2020.github.io/auroral-ontology-contexts/cellTowers/context.json",
+        {
+          "distance": {
+            "@id": "https://auroral.iot.linkeddata.es/def/adapters#Distance",
+            "@type": "http://www.w3.org/2001/XMLSchema#integer"
+          }
+        }
+      ],
+      "cellId": "77158147",
+      "hasRange": {
+        "range": "1000"
+      },
+      "location": {
+        "lat": 17.139122,
+        "long": 48.151123
+      },
+      "distance": 14
+    },
+    {
+      "@context": [
+        "https://auroralh2020.github.io/auroral-ontology-contexts/cellTowers/context.json",
+        {
+          "distance": {
+            "@id": "https://auroral.iot.linkeddata.es/def/adapters#Distance",
+            "@type": "http://www.w3.org/2001/XMLSchema#integer"
+          }
+        }
+      ],
+      "cellId": "2917939",
+      "hasRange": {
+        "range": "1000"
+      },
+      "location": {
+        "lat": 17.138981,
+        "long": 48.150982
+      },
+      "distance": 17
+    }
+  ]
+
+
+  {
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "title": "Closest Cell Towers Service",
+    "@type": "Service",
+    "securityDefinitions": {
+      "nosec_sc": {
+        "scheme": "nosec"
+      }
+    },
+    "security": "nosec_sc",
+    "properties": {
+      "status": {
+        "type": "string",
+        "forms": [
+          {
+            "href": "http://localhost:8000/api/cell-towers/closest/rdf-mapping"
+          }
+        ]
+      }
+    },
+    "actions": {},
+    "events": {},
+    "adapterId": "node-red-consumedr1959ydfdfafadaadddy9gaada",
+    "serviceDescription": [
+      "Returns 5 closest cell towers based on user's location"
+    ],
+  }
+  
