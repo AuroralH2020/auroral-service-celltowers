@@ -14,17 +14,33 @@ ON CONFLICT DO NOTHING;
 """
 # 10 nearest cells for a given location
 requestNearbyCells = """ 
-SELECT 
-	cellid,
-	ST_Distance(ST_MakePoint({{ lon }}, {{ lat }})::geography, ST_MakePoint(lon, lat)::geography) as distance,
-	range,
-	ST_MakePoint(lon, lat)::geography,
-    lat,
-    lon
-	FROM public.cell_towers
-WHERE ST_DWithin(geo, ST_MakePoint({{ lon }}, {{ lat }})::geography, 1, false)
-ORDER BY  distance
-LIMIT 5
+WITH RECURSIVE towers AS
+  (SELECT cellid,
+          mcc,
+          radio,
+          net,
+          ST_Distance(ST_MakePoint({{ lon }}, {{ lat }})::geography, ST_MakePoint(lon, lat)::geography) AS distance,
+          RANGE,
+          ST_MakePoint(lon, lat)::geography,
+          lat,
+          lon
+   FROM public.cell_towers
+   WHERE ST_DWithin(geo, ST_MakePoint({{ lon }}, {{ lat }})::geography, 1, FALSE)
+   ORDER BY distance
+   LIMIT 5)
+SELECT towers.cellid,
+       distance,
+       RANGE,
+       radio,
+       st_makepoint,
+       lat,
+       lon,
+       operators.name AS Operator,
+       operators.country_code AS CountryCode,
+	   countries.name as CountryName
+FROM towers
+LEFT OUTER JOIN public.operators ON towers.mcc=operators.mcc AND towers.net=operators.mnc
+LEFT OUTER JOIN public.countries ON operators.country_code=countries.code
 """
 groupCountries = """ 
 WITH RECURSIVE
