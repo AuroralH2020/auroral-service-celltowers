@@ -57,6 +57,7 @@ SELECT
 FROM mergedCountries as c 
 INNER JOIN signal_grid ON c.mcc = signal_grid.mcc
 GROUP BY c.mcc
+ORDER BY name
 """
 generateCountrySignalGrid = """
 -- Remove old data
