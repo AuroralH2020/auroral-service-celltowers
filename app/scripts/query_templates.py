@@ -24,7 +24,7 @@ SELECT
 	FROM public.cell_towers
 WHERE ST_DWithin(geo, ST_MakePoint({{ lon }}, {{ lat }})::geography, 1, false)
 ORDER BY  distance
-LIMIT 10
+LIMIT 5
 """
 groupCountries = """ 
 WITH RECURSIVE
