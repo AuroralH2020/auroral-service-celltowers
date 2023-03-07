@@ -36,6 +36,7 @@ SELECT towers.cellid,
        lat,
        lon,
        operators.name AS Operator,
+       towers.net AS OperatorCode,
        operators.country_code AS CountryCode,
 	   countries.name as CountryName
 FROM towers
@@ -77,7 +78,7 @@ SELECT
 	customGrid.code as countryCode,
 	customGrid.mcc as mcc,
     ST_AsGeoJSON(customGrid.geom) as geojson,
-	customGrid.geom as geom
+--	customGrid.geom as geom
     
 -- 	ST_AsText(ST_Centroid(fGrid.geom)) as center
 FROM towers as c

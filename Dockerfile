@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM python:3.10.10-slim as base
+FROM python:3.10.10-slim as base
 
 # Install linux libraries
 RUN apt update && apt install -y libpq-dev python3-dev build-essential

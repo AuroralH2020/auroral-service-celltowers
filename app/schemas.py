@@ -2,11 +2,6 @@ from pydantic import BaseModel
 from typing import Generic, TypeVar
 from pydantic.generics import GenericModel
 
-M = TypeVar("M", bound=BaseModel)
-
-class GenericSingleObject(GenericModel, Generic[M]):
-    rdf: M
-
 class CellTowerSchema(BaseModel):
     cellid: int
     mcc: int
@@ -27,14 +22,11 @@ class CellTowerClosestSchema(BaseModel):
     range: int
     lon: float
     lat: float
-    distance: int
-
-    class Config:
-        orm_mode = True
-
-class DummySchema(BaseModel):
-    cellid: int
-    range: int
+    radio: str
+    operator: str
+    operatorcode: int
+    countryname: str
+    countrycode: str
 
     class Config:
         orm_mode = True
@@ -47,7 +39,6 @@ class CellTowerCoverageSchema(BaseModel):
     radio_umts: int
     radio_lte: int
     countrycode: str
-    geom: str
     geojson: str
 
     class Config:

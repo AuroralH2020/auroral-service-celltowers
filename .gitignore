@@ -9,3 +9,6 @@
 .env
 ./app/scripts/coverage.json
 mcc-mnc-table.json
+
+# Custom
+td&mapping.example
