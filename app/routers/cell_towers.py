@@ -10,14 +10,14 @@ from ..scripts.query_templates import requestNearbyCells
 router = APIRouter()
 
 
-@router.get('/{mcc}', response_model=List[schemas.CellTowerSchema], status_code=status.HTTP_200_OK)
+@router.get('/country/{mcc}', response_model=List[schemas.CellTowerSchema], status_code=status.HTTP_200_OK)
 def get_towers(mcc: int, db: Session = Depends(get_db)):
     towers = db.query(models.CellTower).filter(
         models.CellTower.mcc == mcc).all()
     return towers
 
 
-@router.get('/closest/', response_model=List[schemas.CellTowerClosestSchema], status_code=status.HTTP_200_OK)
+@router.get('/closest', response_model=List[schemas.CellTowerClosestSchema], status_code=status.HTTP_200_OK)
 def get_closest_towers(lat: float, lon: float, db: Session = Depends(get_db)):
     query = text(chevron.render(requestNearbyCells, {'lat': lat, 'lon': lon}))
     towers = db.execute(query).all()
