@@ -30,7 +30,14 @@ def get_closest_towers_rdf_mapping(lat: float, lon: float, db: Session = Depends
     towers = db.execute(query).all()
     print(towers)
     content = [{
-        "@context": "https://auroralh2020.github.io/auroral-ontology-contexts/cellTowers/context.json",
+        "@context": [
+            "https://auroralh2020.github.io/auroral-ontology-contexts/cellTowers/context.json",
+            {
+                "dcterms": "http://purl.org/dc/terms/"
+            }
+        ],
+        "dcterms:rights": "https://opencellid.org/",
+        "dcterms:license": "https://creativecommons.org/licenses/by-sa/4.0/",
         "cellId": f"{tower[0]}",
         "hasRange": {
             "range": f"{tower[2]}"
@@ -48,7 +55,7 @@ def get_closest_towers_rdf_mapping(lat: float, lon: float, db: Session = Depends
             "long": tower[6]
         },
         "providesNetwork":{
-            "@type":f"{tower[3]}"
+            "@type": f"{tower[3]}"
         }
     } for tower in towers]
     return content
