@@ -2,7 +2,7 @@ import chevron
 from typing import List, Dict
 from .. import schemas, models
 from sqlalchemy.orm import Session
-from fastapi import Depends, APIRouter, Response, status
+from fastapi import Depends, APIRouter, status
 from ..database import get_db
 from sqlalchemy.sql import text
 from ..scripts.query_templates import requestNearbyCells
@@ -28,7 +28,6 @@ def get_closest_towers(lat: float, lon: float, db: Session = Depends(get_db)):
 def get_closest_towers_rdf_mapping(lat: float, lon: float, db: Session = Depends(get_db)):
     query = text(chevron.render(requestNearbyCells, {'lat': lat, 'lon': lon}))
     towers = db.execute(query).all()
-    print(towers)
     content = [{
         "@context": [
             "https://auroralh2020.github.io/auroral-ontology-contexts/cellTowers/context.json",
@@ -55,7 +54,7 @@ def get_closest_towers_rdf_mapping(lat: float, lon: float, db: Session = Depends
             "long": tower[6]
         },
         "providesNetwork":{
-            "@type": f"{tower[3]}"
+            "type": f"{tower[3]}"
         }
     } for tower in towers]
     return content
